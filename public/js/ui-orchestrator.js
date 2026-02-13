@@ -1,4 +1,5 @@
 // ui-orchestrator.js
+import './sidebar-left.js';
 import {fetchHello} from "./api-client.js";
 
 const btn = document.getElementById("helloBtn");
