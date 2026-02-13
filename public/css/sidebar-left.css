@@ -1,0 +1,122 @@
+/* sidebar-left.css */
+/* ==================== SIDEBAR LAYOUT ==================== */
+.sidebar-left {
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    min-width: 260px;
+    background-color: var(--bg-sidebar);
+    border-right: 5px double var(--border-subtle);
+    padding: var(--space-lg);
+    gap: var(--space-lg);
+    transition: width 0.3s ease-in-out, min-width 0.3s ease-in-out;
+}
+
+/* ==================== SIDEBAR HEADER ==================== */
+.sidebar-left-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-left-logo {
+    background: var(--accent-soft);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    color: var(--accent-primary);
+}
+
+.sidebar-left-logo .material-symbols-outlined {
+    font-size: 1.875rem;
+}
+
+.sidebar-left-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-left-title h5 {
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* ==================== SIDEBAR NAV ==================== */
+.sidebar-left-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.sidebar-left-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.sidebar-left-nav a:hover {
+    color: var(--accent-primary);
+    background-color: var(--bg-hover);
+}
+
+.sidebar-left-nav a.active {
+    background-color: var(--accent-soft);
+    color: var(--accent-dark);
+    font-weight: 600;
+}
+
+/* ==================== SIDEBAR FOOTER ==================== */
+.sidebar-left-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-lg);
+}
+
+.sidebar-left-footer-btn,
+.sidebar-left-collapse-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.sidebar-left-footer-btn:hover,
+.sidebar-left-collapse-btn:hover {
+    background-color: var(--bg-hover);
+}
+
+/* ==================== COLLAPSED STATE ==================== */
+.sidebar-left.collapsed {
+    width: 72px;
+    min-width: 72px;
+    align-items: center;
+    padding: var(--space-lg) var(--space-sm);
+}
+
+.sidebar-left.collapsed .sidebar-left-title,
+.sidebar-left.collapsed .sidebar-left-nav a span:last-child,
+.sidebar-left.collapsed .sidebar-left-footer-btn span:last-child,
+.sidebar-left.collapsed .sidebar-left-collapse-btn span:last-child {
+    display: none;
+}
+
+.sidebar-left.collapsed .sidebar-left-nav a,
+.sidebar-left.collapsed .sidebar-left-footer-btn,
+.sidebar-left.collapsed .sidebar-left-collapse-btn {
+    justify-content: center;
+    padding: 0.625rem;
+}
+
+.sidebar-left.collapsed .sidebar-left-header {
+    flex-direction: column;
+}

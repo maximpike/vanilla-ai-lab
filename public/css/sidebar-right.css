@@ -1,0 +1,118 @@
+/* sidebar-right.css */
+/* ==================== RIGHT SIDEBAR LAYOUT ==================== */
+.sidebar-right {
+    display: flex;
+    flex-direction: column;
+    width: 304px;
+    min-width: 304px;
+    background-color: var(--bg-sidebar);
+    border-left: 5px double var(--border-subtle);
+    padding: var(--space-xl);
+    gap: var(--space-md);
+}
+
+/* ==================== RIGHT SIDEBAR HEADER ==================== */
+.sidebar-right-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-right-header h3 {
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ==================== UPLOAD BUTTON ==================== */
+.uploadFileBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--accent-primary);
+    color: var(--accent-surface);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.uploadFileBtn:hover {
+    background-color: var(--accent-dark);
+    transform: none;
+}
+
+.uploadFileBtn .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+/* ==================== DOCUMENT LIST ==================== */
+.document-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    flex: 1;
+    overflow-y: auto;
+}
+
+.document-empty-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: var(--space-md) 0;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: background-color 0.12s;
+}
+
+.document-item:hover {
+    background-color: var(--bg-hover);
+}
+
+.document-item-icon {
+    font-size: 1rem;
+    color: #e57373;
+    flex-shrink: 0;
+}
+
+.document-item-name {
+    font-size: 0.75rem;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.document-item .delete-btn {
+    background: transparent;
+    border: none;
+    padding: 0.1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.15s, background-color 0.15s;
+}
+
+.document-item:hover .delete-btn {
+    opacity: 1;
+}
+
+.document-item .delete-btn:hover {
+    color: #e57373;
+    transform: none;
+}
+
+.document-item .delete-btn .material-symbols-outlined {
+    font-size: 0.875rem;
+}

@@ -1,0 +1,31 @@
+/* footer.css */
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+    background-color: var(--bg-sidebar);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.footer-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent-primary);
+    opacity: 0.6;
+}
+
+.footer-version {
+    letter-spacing: 0.025em;
+}

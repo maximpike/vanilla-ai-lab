@@ -1,0 +1,140 @@
+/* style.css */
+/* Mint Theme Color Palette */
+:root {
+    /* === Backgrounds === */
+    --bg-main: #F1F8F4; /* Main content area */
+    --bg-sidebar: #FBFDFB; /* Sidebars */
+    --bg-surface: #FFFFFF; /* Cards, elevated panels */
+    --bg-hover: rgba(0, 0, 0, 0.06); /* Neutral hover state */
+
+    /* === Mint Accent Scale === */
+    --accent-dark: #4a826a; /* Active text, badge text */
+    --accent-primary: #5ba184; /* Headings, logo, primary accent */
+    --accent-bright: #6fc49e; /* Buttons, CTAs */
+    --accent-soft: rgba(74, 130, 106, 0.2); /* Active nav background */
+    --accent-softer: rgba(74, 130, 106, 0.1); /* Badge background, subtle highlights */
+    --accent-surface: #E8F5E9; /* Light accent areas, borders */
+
+    /* === Text === */
+    --text-heading: #0f172a; /* Primary headings */
+    --text-main: #2D3436; /* Body text */
+    --text-muted: #636E72; /* Secondary/descriptive text */
+
+    /* === Borders === */
+    --border-color: #E8F5E9;
+    --border-subtle: rgba(0, 0, 0, 0.15);
+
+    /* === Spacing Scale === */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    /* === Border Radius === */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* ==================== CSS RESET ==================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    font-size: 100%;
+    height: 100%;
+}
+
+body {
+    line-height: 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+/* ============= APP CONTAINER - LAYOUT ============== */
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.layout {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+h1, h2, h3, h4 {
+    color: var(--text-heading);
+    line-height: 1.2;
+}
+
+p {
+    color: var(--text-muted);
+}
+
+/* ==================== BUTTONS ==================== */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.btn-primary {
+    background-color: var(--accent-bright);
+    color: var(--text-main);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-dark);
+}
+
+.btn-secondary {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-dark);
+}
+
+/* ==================== UTILITY ==================== */
+.hidden {
+    display: none;
+}

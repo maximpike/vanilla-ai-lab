@@ -1,17 +1,112 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang ="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vanilla AI Lab</title>
-    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"/>
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/main-content.css">
+    <link rel="stylesheet" href="./css/sidebar-left.css">
+    <link rel="stylesheet" href="./css/sidebar-right.css">
+    <link rel="stylesheet" href="./css/footer.css">
 </head>
-<body>
-    <div id="app">
-        <h1>Vanilla RAG Lab</h1>
-        <button id="helloBtn">Call Orchestrator</button>
-        <p id="output"></p>
+<body class="theme-mint">
+<div class="app">
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Left Sidebar -->
+        <aside class="sidebar-left">
+            <header class="sidebar-left-header">
+                <div class="sidebar-left-logo">
+                    <span class="material-symbols-outlined">biotech</span>
+                </div>
+                <div class="sidebar-left-title">
+                    <h3>AI LAB</h3>
+                    <h5>Research Workspace</h5>
+                </div>
+            </header>
+
+            <nav class="sidebar-left-nav">
+                <a href="#" class="active">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>Home</span>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span>RAG Chat</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-left-footer">
+                <button class="sidebar-left-footer-btn">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Settings</span>
+                </button>
+                <button class="sidebar-left-collapse-btn">
+                    <span class="material-symbols-outlined">side_navigation</span>
+                    <span>Collapse</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Page Content -->
+        <main class="main-content">
+            <span class="badge">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    <span>New Beta Features Available</span>
+                </span>
+            <h1 class="main-heading">
+                Welcome to the <br/><span class="main-heading-accent">AI Research Lab</span>
+            </h1>
+            <p>Design, test, and deploy your next-generation neural networks
+                in a unified environment with high-performance compute clusters
+                at your fingertips.</p>
+            <div class="btn-group">
+                <button id="helloBtn" class="btn-primary">
+                    Call Orchestrator
+                </button>
+                <button class="btn-secondary">Documentation</button>
+            </div>
+            <p id="output"></p>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar-right">
+            <div class="sidebar-right-header">
+                <h3>Collections</h3>
+            </div>
+
+            <button id="uploadFileBtn" class="uploadFileBtn">
+                <span class="material-symbols-outlined">upload_file</span>
+                Upload File
+            </button>
+            <input id="fileUpload" type="file" multiple accept=".pdf" hidden="hidden">
+
+            <!-- Document List -->
+            <ol id="documentList" class="document-list"></ol>
+        </aside>
     </div>
 
-    <script type="module" src="ui-orchestrator.js"></script>
+    <footer class="app-footer">
+        <div class="footer-status">
+            <span class="status-dot"></span>
+            <span>System Online</span>
+        </div>
+        <span class="footer-version">v0.1.0-Stable</span>
+    </footer>
+</div>
+
+<script type="module" src="./js/ui-orchestrator.js"></script>
 </body>
 </html>
