@@ -20,6 +20,8 @@
     --text-main: #2D3436; /* Body text */
     --text-muted: #636E72; /* Secondary/descriptive text */
 
+    --shadow-dropdown: rgba(0, 0, 0, 0.08);
+
     /* === Borders === */
     --border-color: #E8F5E9;
     --border-subtle: rgba(0, 0, 0, 0.15);
@@ -100,7 +102,6 @@ button {
     background: none;
     cursor: pointer;
     font-weight: 500;
-    transition: all 0.2s ease;
 }
 
 .btn-primary,

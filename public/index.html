@@ -87,14 +87,58 @@
                 <h3>Collections</h3>
             </div>
 
-            <button id="uploadFileBtn" class="uploadFileBtn">
+            <!-- Collection Empty State -->
+            <div class="collection-empty-state" id="collectionEmptyState">
+                <span class="material-symbols-outlined collection-empty-icon">folder_off</span>
+                <p class="collection-empty-text">Create your first collection to start uploading documents.</p>
+                <button class="collection-create-btn" id="createCollectionBtn">
+                    <span class="material-symbols-outlined">add</span>
+                    Create Collection
+                </button>
+            </div>
+
+            <!-- Create Collection Input -->
+            <div class="collection-create-input" id="collectionCreateInput">
+                <label class="collection-create-label">Collection name</label>
+                <div class="collection-create-field">
+                    <input id="collectionNameInput" type="text" placeholder="e.g. Car Manuals" maxlength="128">
+                    <button class="collection-create-confirm" id="confirmCollectionBtn">
+                        <span class="material-symbols-outlined">check</span>
+                    </button>
+                    <button class="collection-create-cancel" id="cancelCollectionBtn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collection Selector -->
+            <button class="collection-selector hidden" id="collectionSelectorBtn">
+                <div class="collection-selector-info">
+                    <span class="material-symbols-outlined collection-selector-icon">folder_special</span>
+                    <div class="collection-selector-text">
+                        <span class="collection-selector-name"></span>
+                        <span class="collection-selector-count">0 documents</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined collection-selector-chevron">expand_more</span>
+            </button>
+
+            <!-- Collection Dropdown -->
+            <ul class="collection-dropdown" id="collectionDropdownList"></ul>
+
+            <button class="uploadFileBtn hidden" id="uploadFileBtn">
                 <span class="material-symbols-outlined">upload_file</span>
                 Upload File
             </button>
             <input id="fileUpload" type="file" multiple accept=".pdf" hidden="hidden">
 
+            <!-- Documents Empty State -->
+            <p class="document-empty-text hidden" id="documentEmptyText">
+                Upload your first document to this collection.
+            </p>
+
             <!-- Document List -->
-            <ol id="documentList" class="document-list"></ol>
+            <ol class="document-list" id="documentList"></ol>
         </aside>
     </div>
 
