@@ -34,15 +34,15 @@
             </header>
 
             <nav class="sidebar-left-nav">
-                <a href="#" class="active">
+                <a href="#" data-page="home" class="active">
                     <span class="material-symbols-outlined">home</span>
                     <span>Home</span>
                 </a>
-                <a href="#">
+                <a href="#" data-page="dashboard">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="#">
+                <a href="#" data-page="rag">
                     <span class="material-symbols-outlined">chat</span>
                     <span>RAG Chat</span>
                 </a>
@@ -62,23 +62,40 @@
 
         <!-- Page Content -->
         <main class="main-content">
-            <span class="badge">
+
+            <!-- Home Page -->
+            <section class="page-home" data-page="home">
+                <span class="badge">
                     <span class="material-symbols-outlined">auto_awesome</span>
                     <span>New Beta Features Available</span>
                 </span>
-            <h1 class="main-heading">
-                Welcome to the <br/><span class="main-heading-accent">AI Research Lab</span>
-            </h1>
-            <p>Design, test, and deploy your next-generation neural networks
-                in a unified environment with high-performance compute clusters
-                at your fingertips.</p>
-            <div class="btn-group">
-                <button id="helloBtn" class="btn-primary">
-                    Call Orchestrator
-                </button>
-                <button class="btn-secondary">Documentation</button>
-            </div>
-            <p id="output"></p>
+                <h1 class="main-heading">
+                    Welcome to the <br/><span class="main-heading-accent">AI Research Lab</span>
+                </h1>
+                <p>Design, test, and deploy your next-generation neural networks
+                    in a unified environment with high-performance compute clusters
+                    at your fingertips.</p>
+                <div class="btn-group">
+                    <button id="helloBtn" class="btn-primary">
+                        Call Orchestrator
+                    </button>
+                    <button class="btn-secondary">Documentation</button>
+                </div>
+                <p id="output"></p>
+            </section>
+
+            <!-- Dashboard Page -->
+            <section class="page-dashboard hidden" data-page="dashboard">
+                <h1 class="main-heading">Dashboard</h1>
+                <p>Embedding statistics and system metrics will live here.</p>
+            </section>
+
+            <!-- RAG Chat Page -->
+            <section class="page-rag hidden" data-page="rag">
+                <h1 class="main-heading">RAG Chat</h1>
+                <p>Chat interface for querying your document collections.</p>
+            </section>
+
         </main>
 
         <!-- Right Sidebar -->

@@ -1,4 +1,5 @@
-// ui-orchestrator.js
+// public/js/ui-orchestrator.js
+import './router.js';
 import './sidebar-left.js';
 import './sidebar-right.js';
 import {fetchHello} from "./api-client.js";
