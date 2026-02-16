@@ -1,5 +1,6 @@
 // sidebar-right.js
 import { fetchCollections, createCollection as apiCreateCollection } from "./collection-client.js";
+import { fetchDocuments, uploadDocuments, deleteDocument } from "./document-client.js";
 
 const emptyState = document.getElementById("collectionEmptyState");
 const createCollectionBtn = document.getElementById("createCollectionBtn")
@@ -10,6 +11,7 @@ const cancelCollectionBtn = document.getElementById("cancelCollectionBtn");
 const collectionSelectorBtn = document.getElementById("collectionSelectorBtn");
 const collectionDropDown = document.getElementById("collectionDropdownList");
 const uploadFileBtn = document.getElementById("uploadFileBtn");
+const fileInput = document.getElementById("fileUpload");
 const documentEmptyText = document.getElementById("documentEmptyText");
 const documentList = document.getElementById("documentList");
 
@@ -119,11 +121,52 @@ const renderDropdown = () => {
     collectionDropDown.appendChild(newItem);
 }
 
-const selectCollection = (id) => {
+const refreshDocuments = async () => {
+    const docs = await fetchDocuments(activeCollectionId);
+
+    const collection = collections.find(c => c.id === activeCollectionId);
+    if (collection) {
+        collection.doc_count = docs.length;
+        updateSelectorDisplay();
+        renderDropdown();
+    }
+
+    documentList.innerHTML = "";
+    documentEmptyText.classList.toggle("hidden", docs.length > 0 );
+
+    docs.forEach( (doc) => {
+        const li = document.createElement("li");
+        li.classList.add("document-item");
+
+        const icon = document.createElement("span");
+        icon.classList.add("material-symbols-outlined", "document-item-icon");
+        icon.textContent = "picture_as_pdf";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.classList.add("document-item-name");
+        nameSpan.textContent = doc.original_name;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("delete-btn");
+        deleteBtn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
+        deleteBtn.addEventListener("click", async () => {
+            await deleteDocument(doc.id);
+            await refreshDocuments();
+        });
+
+        li.appendChild(icon);
+        li.appendChild(nameSpan);
+        li.appendChild(deleteBtn);
+        documentList.appendChild(li);
+    })
+}
+
+const selectCollection = async (id) => {
     activeCollectionId = id;
     updateSelectorDisplay();
     renderDropdown();
     handleDropdown();
+    await refreshDocuments();
 };
 
 const handleDropdown = () => {
@@ -136,10 +179,18 @@ createCollectionBtn.addEventListener("click", showCreateInput);
 confirmCollectionBtn.addEventListener("click", () => createCollection(collectionNameInput.value));
 cancelCollectionBtn.addEventListener("click", hideCreateInput);
 collectionSelectorBtn.addEventListener('click', handleDropdown);
-
 collectionNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") createCollection(collectionNameInput.value);
     if (event.key === "Escape") hideCreateInput();
+});
+
+uploadFileBtn.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", async (event) => {
+    if (!activeCollectionId || !event.target.files.length) { return; }
+
+    await uploadDocuments(event.target.files, activeCollectionId);
+    fileInput.value = "";
+    await refreshDocuments();
 });
 
 // ---- Outside Click Dismissal ----
@@ -166,6 +217,7 @@ const init = async () => {
         uploadFileBtn.classList.remove("hidden");
         updateSelectorDisplay();
         renderDropdown();
+        await refreshDocuments();
     }
 };
 
