@@ -1,3 +1,6 @@
+// sidebar-right.js
+import { fetchCollections, createCollection as apiCreateCollection } from "./collection-client.js";
+
 const emptyState = document.getElementById("collectionEmptyState");
 const createCollectionBtn = document.getElementById("createCollectionBtn")
 const createCollectionInput= document.getElementById("collectionCreateInput");
@@ -13,7 +16,6 @@ const documentList = document.getElementById("documentList");
 // ---- State ----
 let collections= [];
 let activeCollectionId = null;
-let nextId = 1;
 
 const showCreateInput = () => {
     emptyState.classList.add("hidden");
@@ -44,12 +46,12 @@ const hideCreateInput = () => {
     }
 }
 
-const createCollection = (name) => {
+const createCollection = async (name) => {
     const trimmed = name.trim();
     if (!trimmed) { return; }
 
-    const newCollection = { id: nextId++, name: trimmed, doc_count: 0 };
-    collections.push(newCollection);
+    const newCollection = await apiCreateCollection(trimmed)
+    collections.push({ ...newCollection, doc_count: 0 });
 
     if (collections.length === 1) {
         emptyState.classList.add("hidden");
@@ -67,8 +69,8 @@ const createCollection = (name) => {
 const updateSelectorDisplay = () => {
     const collection = collections.find(c => c.id === activeCollectionId);
     collectionSelectorBtn.querySelector(".collection-selector-name").textContent = collection.name;
-    collectionSelectorBtn.querySelector(".collection-selector-count").textContent =
-        `${collection.doc_count} document${collection.doc_count !== 1 ? "s" : ""}`;
+    const count = collection.doc_count || 0;
+    collectionSelectorBtn.querySelector(".collection-selector-count").textContent = `${count} document${count !== 1 ? "s" : ""}`;
 }
 
 const renderDropdown = () => {
@@ -79,19 +81,31 @@ const renderDropdown = () => {
         li.classList.add("collection-dropdown-item");
         if (collection.id === activeCollectionId) { li.classList.add("active"); }
 
-        li.innerHTML = `
-            <span class="material-symbols-outlined">folder_special</span>
-            <div class="collection-dropdown-item-text">
-                <span class="collection-dropdown-item-name">${collection.name}</span>
-                <span class="collection-dropdown-item-count">${collection.doc_count} document${(collection.doc_count) !== 1 ? "s" : ""}</span>
-            </div>
-        `
+        const icon = document.createElement("span");
+        icon.classList.add("material-symbols-outlined");
+        icon.textContent = "folder_special";
+
+        const textWrapper = document.createElement("div");
+        textWrapper.classList.add("collection-dropdown-item-text");
+
+        const nameSpan = document.createElement("span");
+        nameSpan.classList.add("collection-dropdown-item-name");
+        nameSpan.textContent = collection.name;
+
+        const countSpan = document.createElement("span");
+        countSpan.classList.add("collection-dropdown-item-count");
+        const count = collection.doc_count || 0;
+        countSpan.textContent = `${count} document${count !== 1 ? "s" : ""}`;
+
+        textWrapper.appendChild(nameSpan);
+        textWrapper.appendChild(countSpan);
+        li.appendChild(icon);
+        li.appendChild(textWrapper);
 
         li.addEventListener("click", () => selectCollection(collection.id));
         collectionDropDown.appendChild(li);
     });
 
-    // TODO: When wiring BE innerHTML -> createElement + textContent to avoid any injection risk
     const newItem = document.createElement("li");
     newItem.classList.add("collection-dropdown-item", "new-collection");
     newItem.innerHTML = `
@@ -141,3 +155,18 @@ document.addEventListener("click", (event) => {
         collectionDropDown.classList.remove("visible");
     }
 });
+
+// ---- Initialise ----
+const init = async () => {
+    collections = await fetchCollections();
+    if (collections.length > 0) {
+        activeCollectionId = collections[0].id;
+        emptyState.classList.add("hidden");
+        collectionSelectorBtn.classList.remove("hidden");
+        uploadFileBtn.classList.remove("hidden");
+        updateSelectorDisplay();
+        renderDropdown();
+    }
+};
+
+init();
