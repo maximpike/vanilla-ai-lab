@@ -21,10 +21,13 @@
   },
   "homepage": "https://github.com/maximpike/vanilla-ai-lab#readme",
   "dependencies": {
+    "@lancedb/lancedb": "^0.26.2",
+    "@lancedb/lancedb-darwin-x64": "^0.22.3",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "pdfjs-dist": "^5.4.624"
   },
   "devDependencies": {
     "browser-sync": "^3.0.4"

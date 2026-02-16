@@ -13,9 +13,13 @@ const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");    // Switches SQLite to Write-Ahead Logging (allows read & write concurrently)
 db.pragma("foreign_keys = ON");     // Without this ON DELETE CASCADE would silently do nothing
 
-const migrationPath = join(__dirname, "migrations", "001-init.sql");
-const schema = readFileSync(migrationPath, "utf-8");
-db.exec(schema);
+const migrations = ["001-init.sql", "002-chunks.sql"];
+
+for (const file of migrations) {
+    const migrationPath = join(__dirname, "migrations", file);
+    const schema = readFileSync(migrationPath, "utf-8");
+    db.exec(schema);
+}
 
 console.log("Database initialised");
 
