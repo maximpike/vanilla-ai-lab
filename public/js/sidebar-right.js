@@ -207,6 +207,14 @@ document.addEventListener("click", (event) => {
     }
 });
 
+// ---- Collapse Toggle ----
+const sidebar = document.querySelector(".sidebar-right");
+const collapseBtn = document.querySelector(".sidebar-right-collapse-btn");
+
+collapseBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+});
+
 // ---- Initialise ----
 const init = async () => {
     collections = await fetchCollections();
