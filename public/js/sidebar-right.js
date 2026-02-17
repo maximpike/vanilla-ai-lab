@@ -66,10 +66,12 @@ const createCollection = async (name) => {
     updateSelectorDisplay();
     renderDropdown();
     hideCreateInput();
+    notifyCollectionsPage();
 }
 
 const updateSelectorDisplay = () => {
     const collection = collections.find(c => c.id === activeCollectionId);
+    if (!collection) return;
     collectionSelectorBtn.querySelector(".collection-selector-name").textContent = collection.name;
     const count = collection.doc_count || 0;
     collectionSelectorBtn.querySelector(".collection-selector-count").textContent = `${count} document${count !== 1 ? "s" : ""}`;
@@ -174,6 +176,39 @@ const handleDropdown = () => {
     collectionDropDown.classList.toggle("visible")
 }
 
+const notifyCollectionsPage = () => {
+    document.dispatchEvent(new CustomEvent("collections-changed"));
+}
+
+// ---- Refresh from external changes (collections page) ----
+const refreshFromExternal = async () => {
+    collections = await fetchCollections();
+
+    if (collections.length === 0) {
+        activeCollectionId = null;
+        collectionSelectorBtn.classList.add("hidden");
+        uploadFileBtn.classList.add("hidden");
+        documentEmptyText.classList.add("hidden");
+        documentList.innerHTML = "";
+        documentList.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+        return;
+    }
+
+    // If active collection was deleted, fall back to first
+    if (!collections.find(c => c.id === activeCollectionId)) {
+        activeCollectionId = collections[0].id;
+    }
+
+    emptyState.classList.add("hidden");
+    collectionSelectorBtn.classList.remove("hidden");
+    uploadFileBtn.classList.remove("hidden");
+    documentList.classList.remove("hidden");
+    updateSelectorDisplay();
+    renderDropdown();
+    await refreshDocuments();
+};
+
 // ---- Event Listeners ----
 createCollectionBtn.addEventListener("click", showCreateInput);
 confirmCollectionBtn.addEventListener("click", () => createCollection(collectionNameInput.value));
@@ -192,6 +227,9 @@ fileInput.addEventListener("change", async (event) => {
     fileInput.value = "";
     await refreshDocuments();
 });
+
+// Listen for changes from the collections management page
+document.addEventListener("collections-changed", refreshFromExternal);
 
 // ---- Outside Click Dismissal ----
 document.addEventListener("click", (event) => {

@@ -6,22 +6,22 @@ const collectionRoutes = Router();
 
 // POST /api/collections
 collectionRoutes.post("/", (req, res) => {
-   try {
-       const { name } = req.body;
-       if (!name) {
-           return res.status(400).json({ error: "Collection name is required in request body" })
-       }
+    try {
+        const name = req.body.name;
+        if (!name) {
+            return res.status(400).json({ error: "Collection name is required in request body" })
+        }
 
-       const result = addCollection(name);
-       if (!result) {
-           return res.status(400).json({ error: "Collection could not be added"})
-       }
+        const result = addCollection(name);
+        if (!result) {
+            return res.status(400).json({ error: "Collection could not be added" })
+        }
 
-       res.status(201).json(result);
-   } catch (error) {
-       console.error("Adding collection failed ", error);
-       res.status(500).json({ error: "Internal server error" });
-   }
+        res.status(201).json(result);
+    } catch (error) {
+        console.error("Adding collection failed: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 // GET /api/collections
@@ -30,7 +30,7 @@ collectionRoutes.get("/", (req, res) => {
         const collections = listCollection();
         res.status(200).json(collections);
     } catch (error) {
-        console.error("Getting collection failed ", error.message);
+        console.error("Getting collection failed: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 })
@@ -51,20 +51,18 @@ collectionRoutes.put("/:id", (req, res) => {
         }
         res.status(200).json(result);
     } catch (error) {
-        console.error("Updating collection failed ", error.message);
+        console.error("Updating collection failed: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 });
 
 // DELETE /api/collections/:id
-collectionRoutes.delete("/:id", (req, res) => {
+collectionRoutes.delete("/:id", async (req, res) => {
     try {
-        const { id } = req.params;
-
-        deleteCollection(id);
-        res.status(204).end()
+        await deleteCollection(req.params.id);
+        res.status(204).end();
     } catch (error) {
-        console.error("Deleting collection failed ", error.message);
+        console.error("Deleting collection failed: ", error.message);
         res.status(500).json({ error: "Internal server error" });
     }
 });

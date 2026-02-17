@@ -16,6 +16,8 @@ export const navigateTo = (pageName) => {
     navLinks.forEach((link) => {
         link.classList.toggle("active", link.dataset.page === pageName);
     });
+
+    document.dispatchEvent(new CustomEvent("page-changed", { detail: pageName }));
 };
 
 // ---- Event Listeners ----

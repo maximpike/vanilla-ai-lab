@@ -1,8 +1,9 @@
 // service/collection-service.js
 import db from "../db/database.js";
-import {mkdirSync, rmSync} from "fs";
-import {join, dirname} from "path";
-import {fileURLToPath} from "url";
+import { mkdirSync, rmSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { deleteByCollection } from "./vector-store.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const uploadsDir = join(__dirname, "..", "uploads");
@@ -23,9 +24,10 @@ export const updateCollection = (name, id) => {
     return { id, name }
 }
 
-export const deleteCollection = (id) => {
-    stmtDelete.run(id)
-    rmSync(join(uploadsDir, id), {recursive: true, force: true})
+export const deleteCollection = async (id) => {
+    stmtDelete.run(id);
+    rmSync(join(uploadsDir, id), {recursive: true, force: true});
+    await deleteByCollection(id);
 }
 
 const stmtInsert = db.prepare(`
