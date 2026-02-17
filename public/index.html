@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./css/main-content.css">
     <link rel="stylesheet" href="./css/sidebar-left.css">
     <link rel="stylesheet" href="./css/sidebar-right.css">
+    <link rel="stylesheet" href="./css/collections-page.css">
     <link rel="stylesheet" href="./css/footer.css">
 </head>
 <body class="theme-mint">
@@ -45,6 +46,10 @@
                 <a href="#" data-page="rag">
                     <span class="material-symbols-outlined">chat</span>
                     <span>RAG Chat</span>
+                </a>
+                <a href="#" data-page="collections">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    <span>Collections</span>
                 </a>
             </nav>
 
@@ -82,6 +87,56 @@
                     <button class="btn-secondary">Documentation</button>
                 </div>
                 <p id="output"></p>
+            </section>
+
+            <!-- Collections Page -->
+            <section class="page-collections hidden" data-page="collections">
+                <div class="collections-header">
+                    <div>
+                        <h1 class="main-heading">Collections</h1>
+                        <p class="collections-subtitle">Manage your document collections and their contents.</p>
+                    </div>
+                    <button class="collections-create-btn" id="collectionsCreateBtn">
+                        <span class="material-symbols-outlined">add</span>
+                        New Collection
+                    </button>
+                </div>
+
+                <table class="collections-table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Documents</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="collectionsTableBody"></tbody>
+                    <tfoot>
+                    <tr class="collections-create-row hidden" id="collectionsCreateRow">
+                        <td colspan="4">
+                            <div class="collections-create-field">
+                                <input id="collectionsCreateInput"
+                                       type="text"
+                                       placeholder="Collection name"
+                                       maxlength="128">
+                                <button class="collections-create-confirm" id="collectionsCreateConfirm">
+                                    <span class="material-symbols-outlined">check</span>
+                                </button>
+                                <button class="collections-create-cancel" id="collectionsCreateCancel">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Collections Empty State -->
+                <div class="collections-empty-state hidden" id="collectionsEmptyState">
+                    <span class="material-symbols-outlined">folder_off</span>
+                    <p>No collections yet. Create one to start uploading documents.</p>
+                </div>
             </section>
 
             <!-- Dashboard Page -->
@@ -169,6 +224,18 @@
         </div>
         <span class="footer-version">v0.1.0-Stable</span>
     </footer>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<div class="confirm-delete-backdrop" id="confirmDeleteDialog">
+    <div class="confirm-delete-dialog">
+        <h4>Delete Collection</h4>
+        <p id="confirmDeleteMessage"></p>
+        <div class="confirm-delete-actions">
+            <button class="btn-cancel-delete" id="cancelDeleteBtn">Cancel</button>
+            <button class="btn-confirm-delete" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
 </div>
 
 <script type="module" src="./js/ui-orchestrator.js"></script>
