@@ -1,0 +1,414 @@
+/* rag-chat.css */
+/* ==================== PAGE LAYOUT ==================== */
+.page-rag {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 5vw, 4rem);
+    gap: var(--space-lg);
+    overflow: hidden;
+}
+
+.rag-header {
+    flex-shrink: 0;
+}
+
+.rag-header h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--text-heading);
+}
+
+.rag-header p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: var(--space-xs);
+}
+
+/* ==================== STATS ROW ==================== */
+.rag-stats-row {
+    display: flex;
+    gap: var(--space-md);
+    flex-shrink: 0;
+}
+
+.rag-stat-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.rag-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background-color: var(--accent-soft);
+    flex-shrink: 0;
+}
+
+.rag-stat-icon .material-symbols-outlined {
+    font-size: 1.125rem;
+    color: var(--accent-primary);
+}
+
+.rag-stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.rag-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    line-height: 1;
+}
+
+.rag-stat-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* ==================== NO COLLECTION STATE ==================== */
+.rag-no-collection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    text-align: center;
+}
+
+.rag-no-collection .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--border-color);
+}
+
+.rag-no-collection p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    max-width: 280px;
+}
+
+/* ==================== CHAT CONTAINER ==================== */
+.rag-chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-height: 0;
+}
+
+.rag-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    scroll-behavior: smooth;
+}
+
+/* ==================== EMPTY CHAT STATE ==================== */
+.rag-chat-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-xl);
+    text-align: center;
+    opacity: 0.7;
+}
+
+.rag-chat-empty .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--accent-primary);
+    opacity: 0.4;
+}
+
+.rag-chat-empty p {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    max-width: 260px;
+    line-height: 1.6;
+}
+
+/* ==================== MESSAGE BUBBLES ==================== */
+.rag-message {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 78%;
+    animation: message-in 0.2s ease-out;
+}
+
+@keyframes message-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.rag-message.user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.rag-message.assistant {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.rag-message-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.rag-message-avatar {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background-color: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rag-message-avatar .material-symbols-outlined {
+    font-size: 0.75rem;
+    color: var(--accent-primary);
+}
+
+.rag-message.user .rag-message-avatar {
+    background-color: var(--accent-bright);
+}
+
+.rag-message.user .rag-message-avatar .material-symbols-outlined {
+    color: white;
+}
+
+.rag-message-bubble {
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-main);
+}
+
+.rag-message.user .rag-message-bubble {
+    background-color: var(--accent-bright);
+    color: white;
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.rag-message.assistant .rag-message-bubble {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+/* ==================== SOURCE REFERENCES ==================== */
+.rag-sources {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+.rag-sources-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    padding-left: 0.25rem;
+}
+
+.rag-source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.25rem 0.625rem;
+    background-color: var(--accent-softer);
+    border: 1px solid var(--accent-surface);
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    color: var(--accent-dark);
+    font-weight: 500;
+    max-width: 100%;
+}
+
+.rag-source-chip .material-symbols-outlined {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.rag-source-chip-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rag-sources-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
+
+/* ==================== TYPING INDICATOR ==================== */
+.rag-typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-sm);
+    width: fit-content;
+    animation: message-in 0.2s ease-out;
+}
+
+.rag-typing-dots {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.rag-typing-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--accent-primary);
+    animation: typing-bounce 1.2s ease-in-out infinite;
+}
+
+.rag-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.rag-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30%            { transform: translateY(-4px); opacity: 1; }
+}
+
+.rag-typing-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ==================== INPUT BAR ==================== */
+.rag-input-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+}
+
+.rag-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem var(--space-md);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.rag-input-wrapper:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-softer);
+}
+
+.rag-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 0.875rem;
+    color: var(--text-main);
+    line-height: 1.5;
+    max-height: 120px;
+    min-height: 22px;
+    overflow-y: auto;
+}
+
+.rag-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.rag-textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rag-send-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    background-color: var(--accent-primary);
+    color: white;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+.rag-send-btn:hover:not(:disabled) {
+    background-color: var(--accent-dark);
+    transform: scale(1.05);
+}
+
+.rag-send-btn:disabled {
+    background-color: var(--border-color);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.rag-send-btn .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+.rag-input-hint {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    padding-bottom: 0.4rem;
+    white-space: nowrap;
+}

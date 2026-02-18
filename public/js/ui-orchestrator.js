@@ -3,6 +3,7 @@ import './router.js';
 import './sidebar-left.js';
 import './sidebar-right.js';
 import './collections-page.js';
+import './rag-chat.js';
 import {fetchHello} from "./api-client.js";
 
 const btn = document.getElementById("helloBtn");

@@ -20,6 +20,12 @@ const documentList = document.getElementById("documentList");
 let collections = [];
 let activeCollectionId = null;
 
+const notifyCollectionSelected = () => {
+    document.dispatchEvent(new CustomEvent("collection-selected", {
+        detail: { collectionId: activeCollectionId }
+    }));
+};
+
 const showCreateInput = () => {
     emptyState.classList.add("hidden");
     collectionSelectorBtn.classList.add("hidden");
@@ -68,6 +74,7 @@ const createCollection = async (name) => {
     renderDropdown();
     hideCreateInput();
     notifyCollectionsPage();
+    notifyCollectionSelected();
 };
 
 const updateSelectorDisplay = () => {
@@ -180,6 +187,7 @@ const selectCollection = async (id) => {
     renderDropdown();
     handleDropdown();
     await refreshDocuments();
+    notifyCollectionSelected();
 };
 
 const handleDropdown = () => {
@@ -203,12 +211,14 @@ const refreshFromExternal = async () => {
         documentList.innerHTML = "";
         documentList.classList.add("hidden");
         emptyState.classList.remove("hidden");
+        notifyCollectionSelected();
         return;
     }
 
     // If active collection was deleted, fall back to first
     if (!collections.find(c => c.id === activeCollectionId)) {
         activeCollectionId = collections[0].id;
+        notifyCollectionSelected();
     }
 
     emptyState.classList.add("hidden");
@@ -275,6 +285,8 @@ const init = async () => {
         renderDropdown();
         await refreshDocuments();
     }
+    // Broadcast the initial selection (even if null) so RAG page can set up
+    notifyCollectionSelected();
 };
 
 init();

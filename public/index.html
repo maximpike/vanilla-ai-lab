@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./css/sidebar-left.css">
     <link rel="stylesheet" href="./css/sidebar-right.css">
     <link rel="stylesheet" href="./css/collections-page.css">
+    <link rel="stylesheet" href="./css/rag-chat.css">
     <link rel="stylesheet" href="./css/footer.css">
 </head>
 <body class="theme-mint">
@@ -93,8 +94,8 @@
             <section class="page-collections hidden" data-page="collections">
                 <div class="collections-header">
                     <div>
-                        <h1 class="main-heading">Collections</h1>
-                        <p class="collections-subtitle">Manage your document collections and their contents.</p>
+                        <h1>Collections</h1>
+                        <p>Manage your document collections and their contents.</p>
                     </div>
                     <button class="collections-create-btn" id="collectionsCreateBtn">
                         <span class="material-symbols-outlined">add</span>
@@ -141,14 +142,79 @@
 
             <!-- Dashboard Page -->
             <section class="page-dashboard hidden" data-page="dashboard">
-                <h1 class="main-heading">Dashboard</h1>
+                <h1>Dashboard</h1>
                 <p>Embedding statistics and system metrics will live here.</p>
             </section>
 
             <!-- RAG Chat Page -->
             <section class="page-rag hidden" data-page="rag">
-                <h1 class="main-heading">RAG Chat</h1>
-                <p>Chat interface for querying your document collections.</p>
+                <div class="rag-header">
+                    <h1>RAG Chat</h1>
+                    <p>Query your document collections using semantic search.</p>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="rag-stats-row hidden" id="ragStatsRow">
+                    <div class="rag-stat-card">
+                        <div class="rag-stat-icon">
+                            <span class="material-symbols-outlined">description</span>
+                        </div>
+                        <div class="rag-stat-body">
+                            <span class="rag-stat-value" id="ragStatDocuments">0</span>
+                            <span class="rag-stat-label">Documents</span>
+                        </div>
+                    </div>
+                    <div class="rag-stat-card">
+                        <div class="rag-stat-icon">
+                            <span class="material-symbols-outlined">segment</span>
+                        </div>
+                        <div class="rag-stat-body">
+                            <span class="rag-stat-value" id="ragStatChunks">0</span>
+                            <span class="rag-stat-label">Chunks</span>
+                        </div>
+                    </div>
+                    <div class="rag-stat-card">
+                        <div class="rag-stat-icon">
+                            <span class="material-symbols-outlined">hub</span>
+                        </div>
+                        <div class="rag-stat-body">
+                            <span class="rag-stat-value" id="ragStatEmbeds">0</span>
+                            <span class="rag-stat-label">Embeddings</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Collection State -->
+                <div class="rag-no-collection" id="ragNoCollection">
+                    <span class="material-symbols-outlined">folder_off</span>
+                    <p>Select or create a collection in the sidebar to start chatting with your documents.</p>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="rag-chat-container hidden" id="ragChatContainer">
+                    <div class="rag-chat-messages" id="ragChatMessages">
+                        <!-- Empty state inside the chat -->
+                        <div class="rag-chat-empty">
+                            <span class="material-symbols-outlined">chat_bubble</span>
+                            <p>Ask a question about your documents. The assistant will search the knowledge base and cite its sources.</p>
+                        </div>
+                    </div>
+
+                    <div class="rag-input-bar">
+                        <div class="rag-input-wrapper">
+                            <textarea
+                                    id="ragInput"
+                                    class="rag-textarea"
+                                    placeholder="Ask something about your documents…"
+                                    rows="1"
+                                    maxlength="2000"
+                            ></textarea>
+                        </div>
+                        <button class="rag-send-btn" id="ragSendBtn" disabled>
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </div>
             </section>
 
         </main>

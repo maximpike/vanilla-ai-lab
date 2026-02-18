@@ -6,6 +6,7 @@ import collectionRoutes from "./routes/collection-routes.js";
 import documentRoutes from "./routes/document-routes.js";
 import embeddingRoutes from "./routes/embedding-routes.js";
 import modelRoutes from "./routes/model-routes.js";
+import ragRoutes from "./routes/rag-routes.js";
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +19,7 @@ app.use("/api/collections", collectionRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/embeddings", embeddingRoutes);
 app.use("/api/models", modelRoutes);
+app.use("/api/rag", ragRoutes);
 
 app.get("/api/hello", (req, res) => {
     res.json({ message: "Hello from the Modular Backend!" });
