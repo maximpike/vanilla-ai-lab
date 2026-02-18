@@ -1,11 +1,12 @@
 // sidebar-right.js
 import { fetchCollections, createCollection as apiCreateCollection } from "./collection-client.js";
 import { fetchDocuments, uploadDocuments, deleteDocument } from "./document-client.js";
+import { showConfirmDialogue } from "./confirm-dialogue.js";
 
 const emptyState = document.getElementById("collectionEmptyState");
-const createCollectionBtn = document.getElementById("createCollectionBtn")
-const createCollectionInput= document.getElementById("collectionCreateInput");
-const collectionNameInput = document.getElementById("collectionNameInput")
+const createCollectionBtn = document.getElementById("createCollectionBtn");
+const createCollectionInput = document.getElementById("collectionCreateInput");
+const collectionNameInput = document.getElementById("collectionNameInput");
 const confirmCollectionBtn = document.getElementById("confirmCollectionBtn");
 const cancelCollectionBtn = document.getElementById("cancelCollectionBtn");
 const collectionSelectorBtn = document.getElementById("collectionSelectorBtn");
@@ -16,7 +17,7 @@ const documentEmptyText = document.getElementById("documentEmptyText");
 const documentList = document.getElementById("documentList");
 
 // ---- State ----
-let collections= [];
+let collections = [];
 let activeCollectionId = null;
 
 const showCreateInput = () => {
@@ -29,7 +30,7 @@ const showCreateInput = () => {
     createCollectionInput.classList.add("visible");
     collectionNameInput.value = "";
     collectionNameInput.focus();
-}
+};
 
 const hideCreateInput = () => {
     createCollectionInput.classList.remove("visible");
@@ -46,13 +47,13 @@ const hideCreateInput = () => {
             documentEmptyText.classList.remove("hidden");
         }
     }
-}
+};
 
 const createCollection = async (name) => {
     const trimmed = name.trim();
     if (!trimmed) { return; }
 
-    const newCollection = await apiCreateCollection(trimmed)
+    const newCollection = await apiCreateCollection(trimmed);
     collections.push({ ...newCollection, doc_count: 0 });
 
     if (collections.length === 1) {
@@ -67,7 +68,7 @@ const createCollection = async (name) => {
     renderDropdown();
     hideCreateInput();
     notifyCollectionsPage();
-}
+};
 
 const updateSelectorDisplay = () => {
     const collection = collections.find(c => c.id === activeCollectionId);
@@ -75,7 +76,7 @@ const updateSelectorDisplay = () => {
     collectionSelectorBtn.querySelector(".collection-selector-name").textContent = collection.name;
     const count = collection.doc_count || 0;
     collectionSelectorBtn.querySelector(".collection-selector-count").textContent = `${count} document${count !== 1 ? "s" : ""}`;
-}
+};
 
 const renderDropdown = () => {
     collectionDropDown.innerHTML = "";
@@ -115,13 +116,13 @@ const renderDropdown = () => {
     newItem.innerHTML = `
         <span class="material-symbols-outlined">add</span>
         <span>New Collection</span>
-    `
+    `;
     newItem.addEventListener("click", () => {
         handleDropdown();
         showCreateInput();
     });
     collectionDropDown.appendChild(newItem);
-}
+};
 
 const refreshDocuments = async () => {
     const docs = await fetchDocuments(activeCollectionId);
@@ -134,9 +135,9 @@ const refreshDocuments = async () => {
     }
 
     documentList.innerHTML = "";
-    documentEmptyText.classList.toggle("hidden", docs.length > 0 );
+    documentEmptyText.classList.toggle("hidden", docs.length > 0);
 
-    docs.forEach( (doc) => {
+    docs.forEach((doc) => {
         const li = document.createElement("li");
         li.classList.add("document-item");
 
@@ -151,17 +152,27 @@ const refreshDocuments = async () => {
         const deleteBtn = document.createElement("button");
         deleteBtn.classList.add("delete-btn");
         deleteBtn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
-        deleteBtn.addEventListener("click", async () => {
-            await deleteDocument(doc.id);
-            await refreshDocuments();
-        });
+        deleteBtn.addEventListener("click", () => confirmDeleteDocument(doc));
 
         li.appendChild(icon);
         li.appendChild(nameSpan);
         li.appendChild(deleteBtn);
         documentList.appendChild(li);
-    })
-}
+    });
+};
+
+const confirmDeleteDocument = (doc) => {
+    showConfirmDialogue({
+        title: "Delete Document",
+        message: `Delete "${doc.original_name}"? This will also remove its embedded vectors and cannot be undone.`,
+        confirmLabel: "Delete",
+        onConfirm: async () => {
+            await deleteDocument(doc.id);
+            await refreshDocuments();
+            notifyCollectionsPage();
+        }
+    });
+};
 
 const selectCollection = async (id) => {
     activeCollectionId = id;
@@ -173,12 +184,12 @@ const selectCollection = async (id) => {
 
 const handleDropdown = () => {
     collectionSelectorBtn.classList.toggle("open");
-    collectionDropDown.classList.toggle("visible")
-}
+    collectionDropDown.classList.toggle("visible");
+};
 
 const notifyCollectionsPage = () => {
     document.dispatchEvent(new CustomEvent("collections-changed"));
-}
+};
 
 // ---- Refresh from external changes (collections page) ----
 const refreshFromExternal = async () => {
@@ -213,7 +224,7 @@ const refreshFromExternal = async () => {
 createCollectionBtn.addEventListener("click", showCreateInput);
 confirmCollectionBtn.addEventListener("click", () => createCollection(collectionNameInput.value));
 cancelCollectionBtn.addEventListener("click", hideCreateInput);
-collectionSelectorBtn.addEventListener('click', handleDropdown);
+collectionSelectorBtn.addEventListener("click", handleDropdown);
 collectionNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") createCollection(collectionNameInput.value);
     if (event.key === "Escape") hideCreateInput();
@@ -228,7 +239,6 @@ fileInput.addEventListener("change", async (event) => {
     await refreshDocuments();
 });
 
-// Listen for changes from the collections management page
 document.addEventListener("collections-changed", refreshFromExternal);
 
 // ---- Outside Click Dismissal ----

@@ -31,9 +31,9 @@ documentRoutes.post("/:collectionId/upload", fileUpload.array("files", 10), (req
 });
 
 // DELETE /api/documents/:id
-documentRoutes.delete("/:id", (req, res) => {
+documentRoutes.delete("/:id", async (req, res) => {
     try {
-        deleteDocument(req.params.id);
+        await deleteDocument(req.params.id);
         res.sendStatus(204);
     } catch (error) {
         console.error("Delete document failed:", error);

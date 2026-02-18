@@ -5,6 +5,7 @@ import {
     updateCollection as apiUpdateCollection,
     deleteCollection as apiDeleteCollection
 } from "./collection-client.js";
+import { showConfirmDialogue } from "./confirm-dialogue.js";
 
 const tableBody = document.getElementById("collectionsTableBody");
 const emptyState = document.getElementById("collectionsEmptyState");
@@ -13,14 +14,9 @@ const createRow = document.getElementById("collectionsCreateRow");
 const createInput = document.getElementById("collectionsCreateInput");
 const createConfirmBtn = document.getElementById("collectionsCreateConfirm");
 const createCancelBtn = document.getElementById("collectionsCreateCancel");
-const confirmDeleteDialog = document.getElementById("confirmDeleteDialog");
-const confirmDeleteMessage = document.getElementById("confirmDeleteMessage");
-const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 
 // ---- State ----
 let collections = [];
-let pendingDeleteId = null;
 let renameActive = false;
 
 // ---- Helpers ----
@@ -51,7 +47,7 @@ const renderTable = () => {
         const tr = document.createElement("tr");
         tr.classList.add("collections-row");
 
-        // Name Cell
+        // Name cell
         const nameTd = document.createElement("td");
         nameTd.classList.add("collections-cell");
 
@@ -95,7 +91,7 @@ const renderTable = () => {
         deleteBtn.classList.add("collections-action-btn", "collections-action-danger");
         deleteBtn.title = "Delete";
         deleteBtn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
-        deleteBtn.addEventListener("click", () => showDeleteConfirm(collection));
+        deleteBtn.addEventListener("click", () => confirmDelete(collection));
 
         actionsTd.appendChild(renameBtn);
         actionsTd.appendChild(deleteBtn);
@@ -126,7 +122,6 @@ const submitCreate = async () => {
     if (!name) return;
 
     const newCollection = await apiCreateCollection(name);
-    // Table show invalid date when new collection created.
     collections.push({ ...newCollection, doc_count: 0, created_at: new Date().toISOString() });
     hideCreateRow();
     renderTable();
@@ -153,8 +148,6 @@ const startRename = (tr, nameTd, collection) => {
     const actionsTd = tr.querySelector(".collections-cell-actions");
     nameWrapper.classList.add("hidden");
     actionsTd.classList.add("hidden");
-
-    // Disable all other action buttons while renaming
     setActionsDisabled(true);
 
     const input = document.createElement("input");
@@ -206,29 +199,20 @@ const startRename = (tr, nameTd, collection) => {
     });
 };
 
-// ==================== DELETE CONFIRMATION ====================
-const showDeleteConfirm = (collection) => {
+// ==================== DELETE ====================
+const confirmDelete = (collection) => {
     if (renameActive) return;
-    pendingDeleteId = collection.id;
-    confirmDeleteMessage.textContent = `Delete "${collection.name}" and all its documents? This cannot be undone.`;
-    confirmDeleteDialog.classList.add("visible");
-};
-
-const hideDeleteConfirm = () => {
-    pendingDeleteId = null;
-    confirmDeleteDialog.classList.remove("visible");
-};
-
-const executeDelete = async () => {
-    if (!pendingDeleteId) return;
-
-    const idToDelete = pendingDeleteId;
-    hideDeleteConfirm();
-
-    await apiDeleteCollection(idToDelete);
-    collections = collections.filter(c => c.id !== idToDelete);
-    renderTable();
-    notifySidebar();
+    showConfirmDialogue({
+        title: "Delete Collection",
+        message: `Delete "${collection.name}" and all its documents? This cannot be undone.`,
+        confirmLabel: "Delete",
+        onConfirm: async () => {
+            await apiDeleteCollection(collection.id);
+            collections = collections.filter(c => c.id !== collection.id);
+            renderTable();
+            notifySidebar();
+        }
+    });
 };
 
 // ---- Event Listeners ----
@@ -240,21 +224,12 @@ createInput.addEventListener("keydown", (e) => {
     if (e.key === "Escape") hideCreateRow();
 });
 
-confirmDeleteBtn.addEventListener("click", executeDelete);
-cancelDeleteBtn.addEventListener("click", hideDeleteConfirm);
-
-// Dismiss dialogue on backdrop click
-document.addEventListener("click", (e) => {
-    if (e.target === confirmDeleteDialog) hideDeleteConfirm();
-});
-
 document.addEventListener("collections-changed", async () => {
     collections = await fetchCollections();
     renderTable();
 });
 
 // ---- Initialise ----
-// Re-fetch whenever the page becomes visible (nav click)
 document.addEventListener("page-changed", async (e) => {
     if (e.detail === "collections") {
         collections = await fetchCollections();
@@ -262,7 +237,6 @@ document.addEventListener("page-changed", async (e) => {
     }
 });
 
-// Initial load
 const init = async () => {
     collections = await fetchCollections();
     renderTable();

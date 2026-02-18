@@ -3,6 +3,7 @@ import db from "../db/database.js";
 import { renameSync, unlinkSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { deleteByDocument } from "./vector-store.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const uploadsDir = join(__dirname, "..", "uploads");
@@ -29,19 +30,20 @@ export const listDocuments = (collectionId) => {
     return stmtListByCollectionId.all(collectionId);
 }
 
-export const deleteDocument = (id) => {
+export const deleteDocument = async (id) => {
     const doc = stmtGetByDocumentId.get(id);
     if (!doc) return;
 
     const filePath = join(uploadsDir, doc.collection_id, doc.file_name);
     unlinkSync(filePath);
     stmtDelete.run(id);
+    await deleteByDocument(id);
 }
 
 const stmtInsert = db.prepare(`
-    INSERT INTO documents 
+    INSERT INTO documents
         (id, collection_id, file_name, original_name, size, mime_type)
-    VALUES 
+    VALUES
         (?, ?, ?, ?, ?, ?)
 `);
 
