@@ -387,6 +387,68 @@
     font-size: 0.875rem;
 }
 
+/* ==================== EMBED BUTTON ==================== */
+.embed-btn {
+    background: transparent;
+    border: none;
+    padding: 0.1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s, background-color 0.15s;
+    flex-shrink: 0;
+}
+
+/* Always show embed button when embedded or in error — state should be visible at a glance */
+.embed-btn[data-embed-state="embedded"],
+.embed-btn[data-embed-state="error"],
+.embed-btn[data-embed-state="loading"] {
+    opacity: 1;
+}
+
+.document-item:hover .embed-btn {
+    opacity: 1;
+}
+
+.embed-btn:hover:not(:disabled) {
+    background-color: var(--accent-soft);
+    color: var(--accent-dark);
+}
+
+.embed-btn[data-embed-state="embedded"] {
+    color: var(--accent-primary);
+}
+
+.embed-btn[data-embed-state="error"] {
+    color: #e57373;
+}
+
+.embed-btn[data-embed-state="loading"] {
+    color: var(--accent-primary);
+    cursor: not-allowed;
+}
+
+/* Dim non-loading embed buttons while another is running */
+.embed-btn--locked {
+    opacity: 0.3 !important;
+    cursor: not-allowed;
+}
+
+.embed-btn .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+/* Spinner animation for the loading state icon */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.embed-btn .material-symbols-outlined.spin {
+    display: inline-block;
+    animation: spin 0.9s linear infinite;
+}
+
+
 /* ==================== COLLAPSED STATE ==================== */
 .sidebar-right.collapsed {
     width: 72px;

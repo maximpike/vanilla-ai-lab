@@ -5,20 +5,38 @@ const BASE = "/api/documents";
 export const fetchDocuments = async (collectionId) => {
     let res;
     try {
-        res = await fetch(`${BASE}/${collectionId}`, {method: "GET"});
+        res = await fetch(`${BASE}/${collectionId}`, { method: "GET" });
     } catch (error) {
         console.error("document-client network error:", error);
-        throw error
+        throw error;
     }
 
-    if(!res.ok) {
+    if (!res.ok) {
         const body = await res.json();
         const error = new Error(body.error || "Failed to fetch documents");
         console.error("document-client error:", error);
         throw error;
     }
     return res.json();
-}
+};
+
+export const fetchDocumentsWithEmbedStatus = async (collectionId) => {
+    let res;
+    try {
+        res = await fetch(`${BASE}/${collectionId}/embed-status`, { method: "GET" });
+    } catch (error) {
+        console.error("document-client network error:", error);
+        throw error;
+    }
+
+    if (!res.ok) {
+        const body = await res.json();
+        const error = new Error(body.error || "Failed to fetch documents with embed status");
+        console.error("document-client error:", error);
+        throw error;
+    }
+    return res.json();
+};
 
 export const uploadDocuments = async (files, collectionId) => {
     if (!files || files.length === 0) {
@@ -42,25 +60,25 @@ export const uploadDocuments = async (files, collectionId) => {
         });
     } catch (error) {
         console.error("document-client network error:", error);
-        throw error
+        throw error;
     }
 
-    if(!res.ok) {
+    if (!res.ok) {
         const body = await res.json();
         const error = new Error(body.error || "Failed to upload documents");
         console.error("document-client error:", error);
         throw error;
     }
     return res.json();
-}
+};
 
 export const deleteDocument = async (id) => {
     let res;
     try {
-        res = await fetch(`${BASE}/${id}`, {method: "DELETE"})
+        res = await fetch(`${BASE}/${id}`, { method: "DELETE" });
     } catch (error) {
         console.error("document-client network error:", error);
-        throw error
+        throw error;
     }
 
     if (!res.ok) {
@@ -69,4 +87,4 @@ export const deleteDocument = async (id) => {
         console.error("document-client error:", error);
         throw error;
     }
-}
+};

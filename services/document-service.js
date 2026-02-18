@@ -30,6 +30,10 @@ export const listDocuments = (collectionId) => {
     return stmtListByCollectionId.all(collectionId);
 }
 
+export const listDocumentsWithEmbedStatus = (collectionId) => {
+    return stmtListWithEmbedStatusByCollectionId.all(collectionId);
+}
+
 export const deleteDocument = async (id) => {
     const doc = stmtGetByDocumentId.get(id);
     if (!doc) return;
@@ -49,6 +53,18 @@ const stmtInsert = db.prepare(`
 
 const stmtListByCollectionId = db.prepare(`
     SELECT * FROM documents WHERE collection_id = ?
+`);
+
+// Extends stmtListByCollectionId with a chunk_count per document.
+// chunk_count = 0 means the document has not been embedded yet.
+// chunk_count > 0 means embeddings exist and the document is queryable.
+const stmtListWithEmbedStatusByCollectionId = db.prepare(`
+    SELECT d.*,
+           COUNT(c.id) AS chunk_count
+    FROM documents d
+        LEFT JOIN chunks c ON c.document_id = d.id
+    WHERE d.collection_id = ?
+    GROUP BY d.id
 `);
 
 const stmtGetByDocumentId = db.prepare(`

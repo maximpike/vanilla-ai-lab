@@ -1,7 +1,8 @@
 // sidebar-right.js
 import { fetchCollections, createCollection as apiCreateCollection } from "./collection-client.js";
-import { fetchDocuments, uploadDocuments, deleteDocument } from "./document-client.js";
+import { fetchDocumentsWithEmbedStatus, uploadDocuments, deleteDocument } from "./document-client.js";
 import { showConfirmDialogue } from "./confirm-dialogue.js";
+import {embedDocument} from "./embedding-client.js";
 
 const emptyState = document.getElementById("collectionEmptyState");
 const createCollectionBtn = document.getElementById("createCollectionBtn");
@@ -19,12 +20,9 @@ const documentList = document.getElementById("documentList");
 // ---- State ----
 let collections = [];
 let activeCollectionId = null;
+let isEmbedding = false;  // Global lock: only one embed at a time
 
-const notifyCollectionSelected = () => {
-    document.dispatchEvent(new CustomEvent("collection-selected", {
-        detail: { collectionId: activeCollectionId }
-    }));
-};
+// ==================== COLLECTION CREATE / HIDE ====================
 
 const showCreateInput = () => {
     emptyState.classList.add("hidden");
@@ -76,6 +74,8 @@ const createCollection = async (name) => {
     notifyCollectionsPage();
     notifyCollectionSelected();
 };
+
+// ==================== SELECTOR & DROPDOWN ====================
 
 const updateSelectorDisplay = () => {
     const collection = collections.find(c => c.id === activeCollectionId);
@@ -131,8 +131,10 @@ const renderDropdown = () => {
     collectionDropDown.appendChild(newItem);
 };
 
+// ==================== DOCUMENT LIST ====================
+
 const refreshDocuments = async () => {
-    const docs = await fetchDocuments(activeCollectionId);
+    const docs = await fetchDocumentsWithEmbedStatus(activeCollectionId);
 
     const collection = collections.find(c => c.id === activeCollectionId);
     if (collection) {
@@ -144,29 +146,120 @@ const refreshDocuments = async () => {
     documentList.innerHTML = "";
     documentEmptyText.classList.toggle("hidden", docs.length > 0);
 
-    docs.forEach((doc) => {
-        const li = document.createElement("li");
-        li.classList.add("document-item");
+    docs.forEach((doc) => renderDocumentItem(doc));
+};
 
-        const icon = document.createElement("span");
-        icon.classList.add("material-symbols-outlined", "document-item-icon");
-        icon.textContent = "picture_as_pdf";
+/**
+ * Render a single document list item.
+ * Embed button state is derived from doc.chunk_count:
+ *   0  → "idle"     (never embedded — show embed button)
+ *   >0 → "embedded" (check icon — click to re-embed)
+ */
+const renderDocumentItem = (doc) => {
+    const li = document.createElement("li");
+    li.classList.add("document-item");
+    li.dataset.documentId = doc.id;
 
-        const nameSpan = document.createElement("span");
-        nameSpan.classList.add("document-item-name");
-        nameSpan.textContent = doc.original_name;
+    const icon = document.createElement("span");
+    icon.classList.add("material-symbols-outlined", "document-item-icon");
+    icon.textContent = "picture_as_pdf";
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.classList.add("delete-btn");
-        deleteBtn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
-        deleteBtn.addEventListener("click", () => confirmDeleteDocument(doc));
+    const nameSpan = document.createElement("span");
+    nameSpan.classList.add("document-item-name");
+    nameSpan.title = doc.original_name;
+    nameSpan.textContent = doc.original_name;
 
-        li.appendChild(icon);
-        li.appendChild(nameSpan);
-        li.appendChild(deleteBtn);
-        documentList.appendChild(li);
+    const embedBtn = buildEmbedButton(doc);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.title = "Delete document";
+    deleteBtn.innerHTML = `<span class="material-symbols-outlined">delete</span>`;
+    deleteBtn.addEventListener("click", () => confirmDeleteDocument(doc));
+
+    li.appendChild(icon);
+    li.appendChild(nameSpan);
+    li.appendChild(embedBtn);
+    li.appendChild(deleteBtn);
+    documentList.appendChild(li);
+};
+
+// ==================== EMBED BUTTON ====================
+
+/**
+ * Build the embed button for a document item.
+ * Initial visual state is derived from doc.chunk_count.
+ */
+const buildEmbedButton = (doc) => {
+    const btn = document.createElement("button");
+    btn.classList.add("embed-btn");
+    btn.dataset.documentId = doc.id;
+
+    setEmbedBtnState(btn, doc.chunk_count > 0 ? "embedded" : "idle");
+    btn.addEventListener("click", () => handleEmbed(doc, btn));
+    return btn;
+};
+
+/**
+ * Set the visual state of an embed button.
+ *
+ * @param {HTMLButtonElement} btn
+ * @param {"idle"|"loading"|"embedded"|"error"} state
+ */
+const setEmbedBtnState = (btn, state) => {
+    btn.dataset.embedState = state;
+    btn.disabled = state === "loading";
+
+    const states = {
+        idle:     { icon: "neurology",          title: "Embed document",               spin: false },
+        loading:  { icon: "progress_activity",  title: "Embedding…",                   spin: true  },
+        embedded: { icon: "check_circle",        title: "Embedded — click to re-embed", spin: false },
+        error:    { icon: "error",               title: "Failed — click to retry",      spin: false },
+    };
+
+    const { icon, title, spin } = states[state] ?? states.idle;
+    btn.title = title;
+    btn.innerHTML = `<span class="material-symbols-outlined${spin ? " spin" : ""}">${icon}</span>`;
+};
+
+/**
+ * Disable/enable all embed buttons while one is running.
+ * The currently loading button handles its own disabled state separately.
+ */
+const setAllEmbedButtonsLocked = (locked) => {
+    documentList.querySelectorAll(".embed-btn").forEach((btn) => {
+        if (btn.dataset.embedState !== "loading") {
+            btn.disabled = locked;
+            btn.classList.toggle("embed-btn--locked", locked);
+        }
     });
 };
+
+const handleEmbed = async (doc, btn) => {
+    if (isEmbedding) { return; }
+
+    isEmbedding = true;
+    setEmbedBtnState(btn, "loading");
+    setAllEmbedButtonsLocked(true);
+
+    try {
+        await embedDocument(doc.id);
+        setEmbedBtnState(btn, "embedded");
+        // Notify RAG page so stats refresh
+        document.dispatchEvent(new CustomEvent("collections-changed"));
+    } catch (error) {
+        console.error("Embed failed:", error);
+        setEmbedBtnState(btn, "error");
+    } finally {
+        isEmbedding = false;
+        setAllEmbedButtonsLocked(false);
+        // Ensure the finished button is re-enabled regardless
+        btn.disabled = false;
+        btn.classList.remove("embed-btn--locked");
+    }
+};
+
+// ==================== DELETE DOCUMENT ====================
 
 const confirmDeleteDocument = (doc) => {
     showConfirmDialogue({
@@ -180,6 +273,8 @@ const confirmDeleteDocument = (doc) => {
         }
     });
 };
+
+// ==================== COLLECTION SELECTION ====================
 
 const selectCollection = async (id) => {
     activeCollectionId = id;
@@ -195,11 +290,21 @@ const handleDropdown = () => {
     collectionDropDown.classList.toggle("visible");
 };
 
+// ==================== NOTIFICATIONS ====================
+
 const notifyCollectionsPage = () => {
     document.dispatchEvent(new CustomEvent("collections-changed"));
 };
 
-// ---- Refresh from external changes (collections page) ----
+const notifyCollectionSelected = () => {
+    document.dispatchEvent(new CustomEvent("collection-selected", {
+        detail: { collectionId: activeCollectionId }
+    }));
+};
+
+
+// ==================== EXTERNAL REFRESH ====================
+
 const refreshFromExternal = async () => {
     collections = await fetchCollections();
 
@@ -230,7 +335,8 @@ const refreshFromExternal = async () => {
     await refreshDocuments();
 };
 
-// ---- Event Listeners ----
+// ==================== EVENT LISTENERS ====================
+
 createCollectionBtn.addEventListener("click", showCreateInput);
 confirmCollectionBtn.addEventListener("click", () => createCollection(collectionNameInput.value));
 cancelCollectionBtn.addEventListener("click", hideCreateInput);
@@ -243,7 +349,6 @@ collectionNameInput.addEventListener("keydown", (event) => {
 uploadFileBtn.addEventListener("click", () => fileInput.click());
 fileInput.addEventListener("change", async (event) => {
     if (!activeCollectionId || !event.target.files.length) { return; }
-
     await uploadDocuments(event.target.files, activeCollectionId);
     fileInput.value = "";
     await refreshDocuments();
@@ -273,7 +378,8 @@ collapseBtn.addEventListener("click", () => {
     sidebar.classList.toggle("collapsed");
 });
 
-// ---- Initialise ----
+// ==================== INIT ====================
+
 const init = async () => {
     collections = await fetchCollections();
     if (collections.length > 0) {
