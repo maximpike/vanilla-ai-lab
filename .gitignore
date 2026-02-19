@@ -144,3 +144,8 @@ vite.config.ts.timestamp-*
 /uploads
 /data
 *.db
+
+# SQLite WAL mode companion files
+*.db-shm
+*.db-wal
+*.db-journal

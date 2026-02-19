@@ -1,0 +1,23 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  ollama-pull:
+    image: curlimages/curl:latest
+    depends_on:
+      - ollama
+    command: >
+      sh -c "
+      echo 'Waiting for Ollama...' &&
+      sleep 5 &&
+      curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"llama3.2\"}' &&
+      curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"nomic-embed-text\"}'
+      "
+
+volumes:
+  ollama_data:
