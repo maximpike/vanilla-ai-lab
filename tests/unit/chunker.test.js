@@ -1,5 +1,6 @@
 import { chunkText } from "../../services/chunker.js";
 
+// This is to test GitHub actions CI
 const buildParagraphs = (count) => {
     return Array.from({ length: count }, (_, i) =>
         `Paragraph ${i + 1}. ${"This is filler sentence number one. ".repeat(2).trim()}`
