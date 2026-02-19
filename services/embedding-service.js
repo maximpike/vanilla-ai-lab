@@ -52,32 +52,39 @@ export const embedBatch = async (texts) => {
 }
 
 /**
- * Health check — verify Ollama is running and the model is available.
+ * Health check — verify Ollama is running and all required models are available.
  *
- * @returns {Promise<{ available: boolean, model?: string, reason?: string }>}
+ * @param {string[]} requiredModels - Array of model names to check (e.g., ["nomic-embed-text", "llama3.2"])
+ * @returns {Promise<{ available: boolean, models?: string[], reason?: string }>}
  */
-export const checkOllamaStatus = async () => {
+export const checkOllamaStatus = async (requiredModels = ["nomic-embed-text"]) => {
     try {
-        // Check if Ollama is running
+        // 1. Check if Ollama is running
         const tagsResponse = await fetch(`${OLLAMA_BASE_URL}/api/tags`);
         if (!tagsResponse.ok) {
-            return {available: false, reason: "Ollama is not responding"};
+            return { available: false, reason: "Ollama is not responding" };
         }
 
-        //Check if our embedding model is pulled
-        const tagsData = await tagsResponse.json()
-        const modelInstalled = tagsData.models?.some(
-            (model) => model.name === MODEL || model.name === `${MODEL}:latest`
+        const tagsData = await tagsResponse.json();
+
+        // 2. Create a clean list of installed models
+        const installedModels = tagsData.models?.map((m) => m.name) || [];
+
+        // 3. Check if any required models are missing
+        const missingModels = requiredModels.filter((reqModel) =>
+            !installedModels.includes(reqModel) && !installedModels.includes(`${reqModel}:latest`)
         );
 
-        if (!modelInstalled) {
+        if (missingModels.length > 0) {
+            const missingList = missingModels.join(", ");
             return {
                 available: false,
-                reason: `Model "${MODEL}" not found. Run: ollama pull ${MODEL}`,
+                reason: `Missing models: ${missingList}. Run: ollama pull <model_name>`,
+                missing: missingModels // Exposing this in case you want to auto-pull them programmatically!
             };
         }
 
-        return {available: true, model: MODEL};
+        return { available: true, models: requiredModels };
     } catch (error) {
         return {
             available: false,

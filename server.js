@@ -1,5 +1,6 @@
 // server.js
 import "./db/database.js";
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import collectionRoutes from "./routes/collection-routes.js";
@@ -10,6 +11,7 @@ import ragRoutes from "./routes/rag-routes.js";
 
 const app = express();
 const PORT = 3000;
+dotenv.config();
 
 app.use(cors());
 app.use(express.json());

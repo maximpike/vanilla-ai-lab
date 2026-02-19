@@ -1,5 +1,5 @@
-// public/js/rag-chat.js
-import { getCollectionStats } from "./rag-client.js";
+// public/js/rag-page.js
+import { getCollectionStats, queryRag } from "./rag-client.js";
 
 // ---- DOM refs ----
 const statsDocuments = document.getElementById("ragStatDocuments");
@@ -106,10 +106,10 @@ const renderAssistantMessage = (text, sources = []) => {
             <span class="rag-sources-label">Sources</span>
             <div class="rag-sources-chips">
                 ${sources.map(s => `
-                    <span class="rag-source-chip">
+                    <button class="rag-source-chip" title="${escapeHtml(s.excerpt)}">
                         <span class="material-symbols-outlined">picture_as_pdf</span>
-                        <span class="rag-source-chip-name">${escapeHtml(s)}</span>
-                    </span>
+                        <span class="rag-source-chip-name">${escapeHtml(s.documentName)}</span>
+                    </button>
                 `).join("")}
             </div>
         </div>
@@ -130,6 +130,26 @@ const renderAssistantMessage = (text, sources = []) => {
     scrollToBottom();
 };
 
+const renderErrorMessage = (errorText) => {
+    removeTypingIndicator();
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("rag-message", "assistant", "error");
+
+    wrapper.innerHTML = `
+        <div class="rag-message-meta">
+            <div class="rag-message-avatar">
+                <span class="material-symbols-outlined">error</span>
+            </div>
+            <span>Error</span>
+        </div>
+        <div class="rag-message-bubble">${escapeHtml(errorText)}</div>
+    `;
+
+    chatMessages.appendChild(wrapper);
+    scrollToBottom();
+};
+
 // ==================== SEND ====================
 const sendMessage = async () => {
     const text = textarea.value.trim();
@@ -143,14 +163,12 @@ const sendMessage = async () => {
     renderUserMessage(text);
     renderTypingIndicator();
 
-    // Story 13 will wire the actual LLM call here
-    // For now, simulate a placeholder response after a short delay
     try {
-        await new Promise(r => setTimeout(r, 900));
-        renderAssistantMessage(
-            "RAG generation not yet connected — that's Story 13! The search index and collection stats above are live.",
-            []
-        );
+        const result = await queryRag(text, activeCollectionId);
+        renderAssistantMessage(result.answer, result.sources);
+    } catch (error) {
+        console.error("RAG query failed:", error);
+        renderErrorMessage(error.message || "Something went wrong. Is Ollama running?");
     } finally {
         setGenerating(false);
     }
