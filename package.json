@@ -25,7 +25,6 @@
   "homepage": "https://github.com/maximpike/vanilla-ai-lab#readme",
   "dependencies": {
     "@lancedb/lancedb": "^0.26.2",
-    "@lancedb/lancedb-darwin-x64": "^0.22.3",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
